@@ -25,23 +25,24 @@ An end-to-end multimodal deep learning pipeline that fine-tunes a compact Vision
 ```mermaid
 flowchart LR
     subgraph Data["1. Data Pipeline"]
-        A[Raw Invoices/Receipts] --> B[Image Preprocessing & Resizing]
-        C[Ground-Truth JSON Schemas] --> D[VLM Chat Template Formatter]
-        B & D --> E[Tokenized Multimodal Dataset]
+        A["Raw Invoices & Receipts"] --> B["Image Preprocessing & Resizing"]
+        C["Ground-Truth JSON Schemas"] --> D["VLM Chat Template Formatter"]
+        B --> E["Tokenized Multimodal Dataset"]
+        D --> E
     end
 
     subgraph Training["2. QLoRA Fine-Tuning"]
-        F[Base VLM: Qwen2-VL-2B] --> G[4-Bit NF4 Quantization bitsandbytes]
-        G --> H[Attach LoRA Adapters r=16, alpha=32]
-        E --> I[SFTTrainer Cross-Entropy Loss]
+        F["Base VLM: Qwen2-VL-2B"] --> G["4-Bit NF4 Quantization (bitsandbytes)"]
+        G --> H["Attach LoRA Adapters (r=16, alpha=32)"]
+        E --> I["SFTTrainer Cross-Entropy Loss"]
         H --> I
-        I --> J[Trained LoRA Weights checkpoints/]
+        I --> J["Trained LoRA Weights (checkpoints/)"]
     end
 
     subgraph Inference["3. Evaluation & Serving"]
-        J --> K[Merged / 4-Bit Inference Engine]
-        K --> L[Structured JSON Parser & Validator]
-        L --> M[Side-by-Side Comparison Web UI]
+        J --> K["Merged 4-Bit Inference Engine"]
+        K --> L["Structured JSON Parser & Validator"]
+        L --> M["Side-by-Side Comparison Web UI"]
     end
 ```
 
